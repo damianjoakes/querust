@@ -213,7 +213,7 @@ impl Buffer {
 
     /// Increments the cursor position by count, as long as the result does not pass `self.end`.
     pub fn frontshift(&mut self, count: usize) {
-        if self.pos + count < self.end {
+        if self.pos + count <= self.end {
             self.pos += count;
         }
     }
@@ -239,6 +239,9 @@ impl Read for Buffer {
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
         let src = self.buffer();
         let mut buffer = buf;
-        buffer.write(&src)
+
+        let result = buffer.write(&src)?;
+
+        Ok(result)
     }
 }
