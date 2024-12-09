@@ -1,6 +1,7 @@
 use std::cmp;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::mem::MaybeUninit;
+use std::ops::DerefMut;
 
 /// A buffer object for performing buffered reads to the database.
 #[derive(Debug)]
@@ -142,8 +143,9 @@ impl Buffer {
     /// Returns `Ok(0)` according to the specification for `std::io::Read`, where if the reader hits
     /// `EOF`, or this buffer has a length of `0`, then `Ok(0)` is returned.
     pub fn read_some<R: Read>(&mut self, reader: &mut R) -> std::io::Result<usize> {
-        // Create a slice from the cursor position onwards.
-        let slice = &mut self.buf[self.pos..];
+        // Create a slice from the end of the data onwards. We use `self.end` as the start here,
+        // as inserting after the cursor can cause errors on subsequent reads.
+        let slice = &mut self.buf[self.end..];
 
         // **SAFETY**: `reader.read()` is always going to insert data into our buffer, even when
         //             the data at any position is uninitialized. The data after `slice.len()` is
@@ -156,7 +158,9 @@ impl Buffer {
             let ptr = slice.as_mut_ptr();
             let buffer = std::slice::from_raw_parts_mut(ptr as *mut u8, slice.len());
 
-            reader.read(buffer)?
+            let result = reader.read(buffer)?;
+
+            result
         };
 
         if bytes == 0 {
@@ -200,5 +204,41 @@ impl Buffer {
         self.initialized = cmp::max(self.pos + bytes, self.initialized);
 
         Ok(bytes)
+    }
+
+    /// Backshifts the cursor by the specified amount.
+    pub fn backshift(&mut self, count: usize) {
+        self.pos -= count;
+    }
+
+    /// Increments the cursor position by count, as long as the result does not pass `self.end`.
+    pub fn frontshift(&mut self, count: usize) {
+        if self.pos + count < self.end {
+            self.pos += count;
+        }
+    }
+}
+
+impl Write for Buffer {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        let mut slice = Box::new(buf);
+
+        let a = slice.deref_mut();
+
+        let result = self.read_some(a);
+
+        result
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        unimplemented!()
+    }
+}
+
+impl Read for Buffer {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        let src = self.buffer();
+        let mut buffer = buf;
+        buffer.write(&src)
     }
 }
