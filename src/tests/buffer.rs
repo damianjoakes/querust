@@ -5,19 +5,20 @@ use crate::internal::buffer::Buffer;
 #[test]
 fn test_buffer() {
     let mut buf = Buffer::new(8192);
-    let mut file = File::open(r#"C:\\Users\damia\OneDrive\Documents\cmos-files\AP241127.H01"#).unwrap();
+    let mut file = File::open(r#"./test.txt"#).unwrap();
     let _ = buf.read_some(&mut file).unwrap();
     let b = buf.buffer();
-    let string = String::from_utf8_lossy_owned(b.to_vec());
-
-    buf.discard_buffer();
-
-    let _ = buf.read_some(&mut file).unwrap();
-    let b = buf.buffer();
-    let string2 = String::from_utf8_lossy_owned(b.to_vec());
-
-    dbg!(string);
-    dbg!(string2);
+    dbg!(b);
+    // let string = String::from_utf8_lossy_owned(b.to_vec());
+    //
+    // buf.discard_buffer();
+    //
+    // let _ = buf.read_some(&mut file).unwrap();
+    // let b = buf.buffer();
+    // let string2 = String::from_utf8_lossy_owned(b.to_vec());
+    //
+    // dbg!(string);
+    // dbg!(string2);
 }
 
 #[test]
@@ -50,4 +51,14 @@ fn buf_reader() {
 
         buf = String::new();
     }
+}
+
+#[test]
+fn write_buffer() {
+    let mut buf = Buffer::new(8192);
+    rmp::encode::write_u8(&mut buf, 4).unwrap();
+    dbg!(buf.buffer());
+
+    let result = rmp::decode::read_u8(&mut buf.buffer()).unwrap();
+    dbg!(result);
 }

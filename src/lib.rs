@@ -4,5 +4,9 @@
 
 #[cfg(test)]
 mod tests;
+
+pub(in crate) mod serialization;
 mod internal;
-mod build;
+
+pub use crate::serialization::encode as encode;
+pub use crate::serialization::decode as decode;
