@@ -57,8 +57,14 @@ fn buf_reader() {
 fn write_buffer() {
     let mut buf = Buffer::new(8192);
     rmp::encode::write_u8(&mut buf, 4).unwrap();
+    rmp::encode::write_f32(&mut buf, 34.44f32).unwrap();
     dbg!(buf.buffer());
 
     let result = rmp::decode::read_u8(&mut buf.buffer()).unwrap();
+    dbg!(result);
+
+    buf.frontshift(2);
+
+    let result = rmp::decode::read_f32(&mut buf.buffer()).unwrap();
     dbg!(result);
 }
