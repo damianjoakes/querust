@@ -49,7 +49,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let database = Database::new(DatabaseType::Memory);
     let people = database.connect_table::<Person>("people");
     
-    let john_smith = Person::new(1, "John Smith", 36);
+    let john_smith = Person::new(1, "John Smith", 44);
     let mary_shell = Person::new(2, "Mary Shell", 36);
 
     let transaction = people.transaction();
