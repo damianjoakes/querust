@@ -4,9 +4,13 @@
                  an external data source. Connectors perform IO on files, connect to TCP sockets, store
                  data directly in memory, etc. Connectors are essentially definitions for how `appono` databases
                  will persistently store data.
+                 The `Connector` is important as it must be able to ensure ACID-compliance with the underlying 
+                 data layer that it's communicating with. For solutions such as file storage and in-memory storage
+                 this becomes trivial, but for solutions such as communicating with an external databases,
+                 ACID-compliance becomes reliant on the external database.
 
 2. `Database` - The next step in the data chain. Databases are definitions for objects that implement `Codec`.
-                The `Database`'s job is to handle ACID-compliant data storage, manage tables, act as an 
+                The `Database`'s job is to handle data storage, manage tables, act as an 
                 _"encoder"_ for `Codec`s (by encoding them into their bytes, and decoding them from their bytes),
                 etc.
 
