@@ -10,7 +10,7 @@
                  ACID-compliance becomes reliant on the external database.
 
 2. `Database` - The next step in the data chain. Databases are definitions for objects that implement `Codec`.
-                The `Database`'s job is to handle data storage, manage tables, act as an 
+                The `Database`'s job is to manage tables and act as an 
                 _"encoder"_ for `Codec`s (by encoding them into their bytes, and decoding them from their bytes),
                 etc.
 
@@ -26,6 +26,10 @@ Each operation can be tracked through the data chain as so:
 
 Object values <-> New object instance <-> `Codec` <-> `Database` <-> `Connector`
 
+The `Codec` and `Connector` traits are more for library authors. People who want to create new implementations
+for `appono` to talk to other data storage mediums will primarily use these two traits. People who wish to use
+`appono` strictly for its database/binary serialization functions will use `Database` and their own objects
+they wish to perform these operations on.
 
 Consider the following code:
 
