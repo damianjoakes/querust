@@ -1,5 +1,5 @@
 [package]
-name = "appono-db"
+name = "querust"
 version = "0.1.0"
 edition = "2024"
 
