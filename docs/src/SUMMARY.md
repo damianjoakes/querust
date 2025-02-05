@@ -1,3 +1,8 @@
 # Summary
 [Introduction](./introduction.md)
-[Development Notes](./notes.md)
+
+# Low-level Concepts
+- [Data Chain](./data-chain.md)
+
+# Notes
+- [Development Notes](./notes.md)
