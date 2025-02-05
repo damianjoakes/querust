@@ -1,3 +1,3 @@
-# ApponoDB
-<sup><i>appono - put/apply/add to</i></sup>
+# querust
+<sup><i>QUEriable RUst STructures</i></sup>
 
